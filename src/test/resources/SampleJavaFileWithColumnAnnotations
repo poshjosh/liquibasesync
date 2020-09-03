@@ -1,0 +1,137 @@
+import javax.persistence.*;
+
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Currency;
+
+/**
+ * A CurrencyDetails.
+ */
+@Entity
+@Table(name = "currency_details")
+public class SampleJavaFileWithColumnAnnotations implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency", nullable = false)
+    private Currency currency;
+
+    @Column(name = "name", length = 64, nullable = false)
+    private String name;
+
+    @Column(name = "symbol", length = 4, nullable = false)
+    private String symbol;
+
+    @Column(name = "time_created", nullable = false)
+    private Instant timeCreated;
+
+    @Column(name = "time_modified", nullable = false)
+    private Instant timeModified;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public SampleJavaFileWithColumnAnnotations currency(Currency currency) {
+        this.currency = currency;
+        return this;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public SampleJavaFileWithColumnAnnotations name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public SampleJavaFileWithColumnAnnotations symbol(String symbol) {
+        this.symbol = symbol;
+        return this;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public Instant getTimeCreated() {
+        return timeCreated;
+    }
+
+    public SampleJavaFileWithColumnAnnotations timeCreated(Instant timeCreated) {
+        this.timeCreated = timeCreated;
+        return this;
+    }
+
+    public void setTimeCreated(Instant timeCreated) {
+        this.timeCreated = timeCreated;
+    }
+
+    public Instant getTimeModified() {
+        return timeModified;
+    }
+
+    public SampleJavaFileWithColumnAnnotations timeModified(Instant timeModified) {
+        this.timeModified = timeModified;
+        return this;
+    }
+
+    public void setTimeModified(Instant timeModified) {
+        this.timeModified = timeModified;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SampleJavaFileWithColumnAnnotations)) {
+            return false;
+        }
+        return id != null && id.equals(((SampleJavaFileWithColumnAnnotations) o).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
+
+    @Override
+    public String toString() {
+        return "CurrencyDetails{" +
+            "id=" + getId() +
+            ", currency='" + getCurrency() + "'" +
+            ", name='" + getName() + "'" +
+            ", symbol='" + getSymbol() + "'" +
+            ", timeCreated='" + getTimeCreated() + "'" +
+            ", timeModified='" + getTimeModified() + "'" +
+            "}";
+    }
+}
+
