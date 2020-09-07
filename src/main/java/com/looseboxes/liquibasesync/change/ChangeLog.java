@@ -23,11 +23,14 @@ public interface ChangeLog<NODE_SOURCE> {
     
     default List<String> getColumnNames(String tableName) {
         List<String> tableColumnNames = new ArrayList<>();
-        this.stream()
-                .filter((node) -> Objects.equals(tableName, node.getTableName()))
+        this.streamChanges(tableName)
                 .map((node) -> node.getColumnNames())
                 .forEachOrdered((columnNames) -> tableColumnNames.addAll(columnNames));
         return tableColumnNames;
+    }
+    
+    default Stream<ChangeLogNode<NODE_SOURCE>> streamChanges(String tableName) {
+        return this.stream().filter((node) -> Objects.equals(tableName, node.getTableName()));
     }
     
     default Stream<ChangeLogNode<NODE_SOURCE>> stream() {

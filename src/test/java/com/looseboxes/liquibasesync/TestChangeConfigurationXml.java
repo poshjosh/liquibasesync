@@ -1,11 +1,7 @@
 package com.looseboxes.liquibasesync;
 
 import com.bc.xml.DomReader;
-import com.looseboxes.liquibasesync.change.ChangeLogNode;
 import com.looseboxes.liquibasesync.change.config.JpaUniqueConstraintsChangeConfiguration;
-import com.looseboxes.liquibasesync.change.io.ChangeLogTarget;
-import com.looseboxes.liquibasesync.change.io.ChangeLogTargetProvider;
-import com.looseboxes.liquibasesync.change.io.ChangeLogTargetProviderImpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -14,10 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.function.Supplier;
 import org.w3c.dom.Document;
-import com.looseboxes.liquibasesync.change.io.ChangeLogNodeTargetLocator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,36 +19,6 @@ import java.util.List;
  * @author hp
  */
 public class TestChangeConfigurationXml extends JpaUniqueConstraintsChangeConfiguration{
-
-    /**
-     * Read from source, but do not write to source.
-     * Suitable for test case where we don't want to update source
-     * For example when our source is located in the resources folder
-     * and writing to such location will lead to an exception.
-     */
-    private static final class ChangeLogTargetFileNoOutput implements ChangeLogTarget{
-        private final ChangeLogTarget delegate;
-        public ChangeLogTargetFileNoOutput(ChangeLogTarget delegate) {
-            this.delegate = Objects.requireNonNull(delegate);
-        }
-        @Override
-        public String load() throws IOException {
-            return delegate.load();
-        }
-        @Override
-        public void save(String content) { }
-    }
-
-//    @Override
-    public ChangeLogTargetProvider targetProvider333(ChangeLogNodeTargetLocator<Path> converter) {
-        return new ChangeLogTargetProviderImpl(converter, this.getCharset()){
-            @Override
-            public ChangeLogTarget get(ChangeLogNode node) {
-                ChangeLogTarget target = super.get(node);
-                return new ChangeLogTargetFileNoOutput(target);
-            }
-        };    
-    }
     
     @Override
     public Iterable<Path> getFilesToApplyChangesTo() {
@@ -96,3 +60,36 @@ public class TestChangeConfigurationXml extends JpaUniqueConstraintsChangeConfig
         return () -> Arrays.asList(changeLogDocument);
     }
 }
+    /**
+     * Read from source, but do not write to source.
+     * Suitable for test case where we don't want to update source
+     * For example when our source is located in the resources folder
+     * and writing to such location will lead to an exception.
+     */
+/**
+ * 
+    private static final class ChangeLogTargetFileNoOutput implements ChangeLogTarget{
+        private final ChangeLogTarget delegate;
+        public ChangeLogTargetFileNoOutput(ChangeLogTarget delegate) {
+            this.delegate = Objects.requireNonNull(delegate);
+        }
+        @Override
+        public String load() throws IOException {
+            return delegate.load();
+        }
+        @Override
+        public void save(String content) { }
+    }
+
+    @Override
+    public ChangeLogTargetProvider targetProvider(ChangeLogNodeTargetLocator<Path> converter) {
+        return new ChangeLogTargetProviderImpl(converter, this.getCharset()){
+            @Override
+            public ChangeLogTarget get(ChangeLogNode node) {
+                ChangeLogTarget target = super.get(node);
+                return new ChangeLogTargetFileNoOutput(target);
+            }
+        };    
+    }
+ * 
+ */

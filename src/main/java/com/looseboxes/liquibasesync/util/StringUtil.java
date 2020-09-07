@@ -1,9 +1,17 @@
-package com.looseboxes.liquibasesync.change.io;
+package com.looseboxes.liquibasesync.util;
 
 /**
  * @author hp
  */
-class StringUtil {
+public final class StringUtil {
+    
+    public static String removeSuffix(String columnName, String suffix) {
+        int n = columnName.lastIndexOf(suffix);
+        if(n == -1) {
+            throw new IllegalArgumentException("Text does not contain expected string: " + suffix);
+        }
+        return columnName.substring(0, n);
+    }
     
     public static boolean isJavaComment(String line) {
         line = line.trim();

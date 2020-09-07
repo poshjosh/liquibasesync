@@ -33,4 +33,38 @@ public class ChangeLogTargetFile implements ChangeLogTarget{
                 StandardOpenOption.WRITE,
                 StandardOpenOption.TRUNCATE_EXISTING);
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.path);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ChangeLogTargetFile other = (ChangeLogTargetFile) obj;
+        if (!Objects.equals(this.path, other.path)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ChangeLogTargetFile{path=").append(path);
+        sb.append(", charset=").append(charset);
+        sb.append('}');
+        return sb.toString();
+    }
 }

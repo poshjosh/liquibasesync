@@ -10,17 +10,18 @@ import java.util.Objects;
  */
 public class ChangeLogTargetProviderImpl implements ChangeLogTargetProvider{
     
-    private final ChangeLogNodeTargetLocator<Path> converter;
+    private final ChangeLogNodeTargetLocator<Path> targetLocator;
     private final Charset charset;
 
-    public ChangeLogTargetProviderImpl(ChangeLogNodeTargetLocator<Path> converter, Charset charset) {
-        this.converter = Objects.requireNonNull(converter);
+    public ChangeLogTargetProviderImpl(
+            ChangeLogNodeTargetLocator<Path> targetLocator, Charset charset) {
+        this.targetLocator = Objects.requireNonNull(targetLocator);
         this.charset = Objects.requireNonNull(charset);
     }
 
     @Override
     public ChangeLogTarget get(ChangeLogNode node) {
-        Path path = this.converter.find(node)
+        Path path = this.targetLocator.find(node)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Not Found. File with name matching node: " + node));
         return new ChangeLogTargetFile(path, charset);

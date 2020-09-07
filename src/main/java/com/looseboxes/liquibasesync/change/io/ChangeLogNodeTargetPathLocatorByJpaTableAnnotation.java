@@ -1,6 +1,7 @@
 package com.looseboxes.liquibasesync.change.io;
 
-import com.looseboxes.liquibasesync.Patterns;
+import com.looseboxes.liquibasesync.util.StringUtil;
+import com.looseboxes.liquibasesync.util.Patterns;
 import com.looseboxes.liquibasesync.change.ChangeLogNode;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

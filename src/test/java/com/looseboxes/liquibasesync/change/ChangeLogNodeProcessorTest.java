@@ -1,6 +1,8 @@
 package com.looseboxes.liquibasesync.change;
 
+import com.looseboxes.liquibasesync.TestChangeConfigurationXml;
 import com.looseboxes.liquibasesync.TestUtil;
+import com.looseboxes.liquibasesync.change.config.ChangeConfiguration;
 import com.looseboxes.liquibasesync.change.io.ChangeLogTarget;
 import com.looseboxes.liquibasesync.change.io.ChangeLogTargetString;
 import com.looseboxes.liquibasesync.change.result.ChangeResult;
@@ -15,6 +17,8 @@ import org.w3c.dom.Node;
  * @author hp
  */
 public class ChangeLogNodeProcessorTest {
+    
+    private final ChangeConfiguration changeConfig = new TestChangeConfigurationXml();
     
     public ChangeLogNodeProcessorTest() { }
 
@@ -36,7 +40,7 @@ public class ChangeLogNodeProcessorTest {
     }
     
     public ChangeLogNodeProcessor<Node> getInstance() {
-        return new UpdateJpaColumnAnnotations<>();
+        return changeConfig.nodeProcessor();
     }
     
     public ChangeLogNode<Node> getChangeLogNode(String table, String... columns) {

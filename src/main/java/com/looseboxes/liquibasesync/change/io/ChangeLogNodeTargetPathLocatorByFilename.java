@@ -1,5 +1,6 @@
 package com.looseboxes.liquibasesync.change.io;
 
+import com.looseboxes.liquibasesync.util.StringUtil;
 import com.looseboxes.liquibasesync.change.ChangeLogNode;
 import java.nio.file.Path;
 import java.util.Objects;

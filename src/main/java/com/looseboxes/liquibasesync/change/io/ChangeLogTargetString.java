@@ -22,4 +22,29 @@ public class ChangeLogTargetString implements ChangeLogTarget{
     public void save(String content) {
         this.content = content;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.content);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ChangeLogTargetString other = (ChangeLogTargetString) obj;
+        if (!Objects.equals(this.content, other.content)) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -6,35 +6,40 @@ import com.looseboxes.liquibasesync.change.result.ChangeResult;
 import com.looseboxes.liquibasesync.change.result.ChangeResults;
 import com.looseboxes.liquibasesync.util.StringUtil;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author hp
+ * @deprecated 
  */
-public class UpdateJpaColumnAnnotations<NODE_SOURCE> implements ChangeLogNodeProcessor<NODE_SOURCE>{
+@Deprecated
+public class UpdateJpaColumnAnnotationsDeprecated<NODE_SOURCE> implements ChangeLogNodeProcessor<NODE_SOURCE>{
 
-    private static final Logger LOG = LoggerFactory.getLogger(UpdateJpaColumnAnnotations.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UpdateJpaColumnAnnotationsDeprecated.class);
     
     @Override
     public ChangeResult process(
             ChangeLog<NODE_SOURCE> changeLog, 
             ChangeLogNode<NODE_SOURCE> node, 
             ChangeLogTarget target) {
+
+        // @TODO - process all columns rather than just the first
+        // We process only first here because that's all we need to for node
+        // type <addUniqueConstraints. However our use case should not be
+        // limited to that node type.
+        final String columnName = node.getColumnNames().get(0);
         
+        final boolean shouldBeUnique = changeLog.isUnique(node);
+
         ChangeResult result;
         
         try{
             
             final String content = target.load();
             
-            final List<String> uniqueColumnNames = getUnqiueColumns(changeLog, node.getTableName());
-            
-            final String update = this.update(uniqueColumnNames, content);
+            final String update = this.format(columnName, shouldBeUnique, content);
             
             if( ! update.equals(content)) {
             
@@ -57,18 +62,10 @@ public class UpdateJpaColumnAnnotations<NODE_SOURCE> implements ChangeLogNodePro
         
         return result;
     }
-    
-    private List<String> getUnqiueColumns(ChangeLog<NODE_SOURCE> changeLog, String tableName) {
-        List<String> result = new ArrayList<>();
-        changeLog.streamChanges(tableName)
-                .filter((node) -> changeLog.isUnique(node))
-                .forEachOrdered((node) -> this.addAllColumnNames(node, result));
-        return result;
-    }
-    
-    private void addAllColumnNames(ChangeLogNode<NODE_SOURCE> node, List<String> addTo) {
-        
-        List<String> cols = node.getColumnNames();
+
+    public String format(String columnName, boolean shouldBeUnique, String content) {
+            
+        content = this.process(columnName, shouldBeUnique, content);
         
 //        When we had: ProductItem.product with @Column(name = "product")
 //        Liquibase generated actual column name of 'product_id' and not 'product'
@@ -78,48 +75,45 @@ public class UpdateJpaColumnAnnotations<NODE_SOURCE> implements ChangeLogNodePro
         
         final String idSuffix = "_id";
         
-        for(String col : cols) {
+        if(columnName.endsWith(idSuffix)) {
             
-            addTo.add(col);
-            
-            if(col.endsWith(idSuffix)) {
-            
-                addTo.add(StringUtil.removeSuffix(col, idSuffix));
-            }
+            columnName = StringUtil.removeSuffix(columnName, idSuffix);
+        
+            content = this.process(columnName, shouldBeUnique, content);
         }
+        
+        return content;
     }
 
-    private String update(List<String> uniqueColumns, String content) {
+    private String process(String columnName, boolean shouldBeUnique, String content) {
         StringBuffer buff = new StringBuffer();
-        this.process(uniqueColumns, content, buff);
+        this.process(columnName, shouldBeUnique, content, buff);
         return buff.toString();
     }
     
-    
-    private int process(List<String> uniqueColumns, String content, StringBuffer buff) {
+    private int process(String columnName, boolean shouldBeUnique, String content, StringBuffer buff) {
         
         int updateCount = 0;
 
         Matcher matcher = Patterns.JPA_COLUMN_ANNOTATION.matcher(content);
         
-        uniqueColumns = uniqueColumns.stream().map(StringUtil::format).collect(Collectors.toList());
+        String quotedColumnName = "\"" + columnName + "\"";
         
         while(matcher.find()) {
         
-            final String columnAnnotation = matcher.group();
+            final String found = matcher.group();
             
-            String replacement = columnAnnotation;
+            final String replacement;
             
-            final String columnName = this.getColumnName(columnAnnotation);
-            
-            boolean shouldBeUnique = uniqueColumns.contains(StringUtil.format(columnName));
-            
-            final String update = this.getReplacment(columnAnnotation, shouldBeUnique, null);
-            
-            replacement = update == null ? columnAnnotation : update;
-            if(update != null) {
-                LOG.info("Updating {} to: {}", columnAnnotation, update);
-                ++updateCount;
+            if(found.contains(quotedColumnName)) {
+                final String update = this.getReplacment(found, shouldBeUnique, null);
+                replacement = update == null ? found : update;
+                if(update != null) {
+                    LOG.info("Updating {} to: {}", found, update);
+                    ++updateCount;
+                }
+            }else{
+                replacement = found;
             }
             
             matcher.appendReplacement(buff, replacement);
@@ -129,7 +123,6 @@ public class UpdateJpaColumnAnnotations<NODE_SOURCE> implements ChangeLogNodePro
         
         return updateCount;
     }
-    
 
     private String getReplacment(String found, boolean shouldBeUnique, String resultIfNone) {
         
@@ -161,15 +154,4 @@ public class UpdateJpaColumnAnnotations<NODE_SOURCE> implements ChangeLogNodePro
 
         return replacement == null ? resultIfNone : replacement;
     }
-    
-    private String getColumnName(String columnAnnotation) {
-        Matcher matcher = Patterns.JPA_COLUMN_ANNOTATION_NAME.matcher(columnAnnotation);
-        if(matcher.find()) {
-            return matcher.group(1);
-        }else{
-            throw new IllegalArgumentException(
-                    "Could not extract value of name attribute of Jpa @Column annotation: " + columnAnnotation + ", using pattern: " + Patterns.JPA_COLUMN_ANNOTATION_NAME);
-        }
-    }
 }
-
