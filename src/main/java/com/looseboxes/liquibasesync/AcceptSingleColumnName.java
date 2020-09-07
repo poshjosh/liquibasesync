@@ -1,7 +1,6 @@
 package com.looseboxes.liquibasesync;
 
 import com.bc.xml.XmlUtil;
-import java.util.Objects;
 import org.w3c.dom.Node;
 
 /**
@@ -11,8 +10,8 @@ public class AcceptSingleColumnName implements NodeFilter{
     
     private final XmlUtil xmlUtil;
 
-    public AcceptSingleColumnName(XmlUtil xmlUtil) {
-        this.xmlUtil = Objects.requireNonNull(xmlUtil);
+    public AcceptSingleColumnName() {
+        this.xmlUtil = new XmlUtil();
     }
     
     @Override

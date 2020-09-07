@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <!--
+        Added unique constrains for all entities
+        When we had: ProductItem.product with @Column(name = "product")
+        Liquibase generated actual column name of 'product_id' and not 'product'
+        So we use use the actual column name here, in this case: 'product_id',
+        even though the entity ProductItem has a field named 'product' and none
+        named 'product_id'
+    -->
+    <changeSet id="20200904220000" author="chinomso-ikwuagwu">
+        <addUniqueConstraint tableName="country_details" columnNames="country"/>
+        <addUniqueConstraint tableName="country_details" columnNames="currency"/>
+        <addUniqueConstraint tableName="user_info" columnNames="username"/>
+        <addUniqueConstraint tableName="user_info" columnNames="email_address"/>
+        <addUniqueConstraint tableName="user_info" columnNames="mobile_phone_number"/>
+        <addUniqueConstraint tableName="user_info" columnNames="email_address, time_deleted_unix"
+                             constraintName="unq_user_info__email__time_deleted_unix"/>
+        <addUniqueConstraint tableName="user_info" columnNames="mobile_phone_number, time_deleted_unix"
+                             constraintName="unq_user_info__mobile__time_deleted_unix"/>
+        <addUniqueConstraint tableName="account_details" columnNames="account_number"/> 
+    </changeSet>
+</databaseChangeLog>

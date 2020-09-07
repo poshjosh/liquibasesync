@@ -8,7 +8,7 @@
     </parent>
     
     <artifactId>liquibasesync</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.02</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>After adding liquidbase changelog, run this app to update your java domain/entity types</description>

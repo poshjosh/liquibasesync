@@ -1,16 +1,13 @@
 package com.looseboxes.liquibasesync;
 
-import com.bc.xml.DomReader;
-import com.bc.xml.DomReaderImpl;
-import com.bc.xml.XmlUtil;
-import java.nio.charset.StandardCharsets;
+import com.looseboxes.liquibasesync.change.config.JpaUniqueConstraintsChangeConfiguration;
+import com.looseboxes.liquibasesync.change.config.ChangeConfiguration;
+import com.looseboxes.liquibasesync.change.ChangeLogSourceProcessor;
 import java.nio.file.Path;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * @author hp
@@ -21,39 +18,17 @@ public class ReadMe {
     
     public static void main(String... args) {
         
-        String fileNameExtension = ".java";
+        ChangeConfiguration<Path, Document, Node> config = new JpaUniqueConstraintsChangeConfiguration();
         
-        FileChooser folderChooser = new SimpleFolderChooser();
+        Iterable<Document> changeLogDocuments = config.sourceProvider().get();
         
-        Iterable<Path> paths = new PathsFromUserSelectedFolders(folderChooser, fileNameExtension).get();
+        ChangeLogSourceProcessor<Document> processor = config.sourceProcessor();
+        
+        for(Document document : changeLogDocuments) {
 
-        XmlUtil xmlUtil = new XmlUtil();
-        
-        IO io = new NodeTableNameMatchesFileNameIO(paths, fileNameExtension, xmlUtil, StandardCharsets.UTF_8);
-
-        NodeFilter nodeFilter = new AcceptSingleColumnName(xmlUtil);
-        
-        Formatter<String> columnAnnotationsFormatter = new AddUniqueConstraintToJpaColumnAnnotations();
-
-        Formatter<Node> formatter = new AddUniqueConstraintToJavaFile(xmlUtil, columnAnnotationsFormatter);
-        
-        DomNodeProcessor processor = new ApplyLiquibaseChangeLog(xmlUtil, io, nodeFilter, formatter);
-        
-        FileChooser fileChooser = new SimpleFileChooser("xml");
-        
-        DomReader domReader = new DomReaderImpl();
-        
-        Iterable<Document> docs = new LiquibaseChangelogFromUserSelectedFiles(fileChooser, domReader).get();
-        
-        for(Document doc : docs) {
+            LOG.info("Processing document: {}", document.getDocumentURI());
             
-            LOG.info("Processing document: {}", doc.getDocumentURI());
-            
-            NodeList nodeList = doc.getElementsByTagName("addUniqueConstraint");
-            
-            LOG.info("Found {} nodes", nodeList.getLength());
-        
-            List<Node> failedNodes = processor.process(nodeList);
+            processor.process(document);
         }
     }
 }

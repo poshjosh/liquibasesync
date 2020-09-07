@@ -1,0 +1,409 @@
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+import java.io.Serializable;
+import java.util.Objects;
+import java.time.Instant;
+import java.time.LocalDate;
+
+import com.looseboxes.webstore.domain.enumeration.Gender;
+
+import com.looseboxes.webstore.domain.enumeration.UserStatus;
+
+import com.looseboxes.webstore.domain.enumeration.Currency;
+
+import com.looseboxes.webstore.domain.enumeration.HowDidYouFindUs;
+
+/**
+ * A UserInfo.
+ */
+@Entity
+@Table(name = "user_info")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class UserInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Size(max = 32)
+    @Column(name = "username", length = 32, unique = true)
+    private String username;
+
+    @Size(max = 128)
+    @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
+    @Column(name = "email_address", length = 128, unique = true)
+    private String emailAddress;
+
+    @Size(max = 16)
+    @Column(name = "mobile_phone_number", length = 16, unique = true)
+    private String mobilePhoneNumber;
+
+    @Size(max = 255)
+    @Column(name = "password", length = 255)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender")
+    private Gender gender;
+
+    @Size(max = 64)
+    @Column(name = "last_name", length = 64)
+    private String lastName;
+
+    @Size(max = 64)
+    @Column(name = "first_name", length = 64)
+    private String firstName;
+
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @Size(max = 16)
+    @Column(name = "home_phone_number", length = 16)
+    private String homePhoneNumber;
+
+    @Size(max = 16)
+    @Column(name = "office_phone_number", length = 16)
+    private String officePhoneNumber;
+
+    @Size(max = 255)
+    @Column(name = "image", length = 255, unique = true)
+    private String image;
+
+    @Size(max = 255)
+    @Column(name = "url", length = 255, unique = true)
+    private String url;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private UserStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency")
+    private Currency currency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "how_did_you_find_us")
+    private HowDidYouFindUs howDidYouFindUs;
+
+    @NotNull
+    @Column(name = "time_created", nullable = false)
+    private Instant timeCreated;
+
+    @NotNull
+    @Column(name = "time_modified", nullable = false)
+    private Instant timeModified;
+
+    @NotNull
+    @Column(name = "time_deleted_unix", nullable = false)
+    private Long timeDeletedUnix;
+
+    @OneToOne
+    @JoinColumn(unique = true)
+    private Address address;
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public UserInfo username(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public UserInfo emailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+        return this;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getMobilePhoneNumber() {
+        return mobilePhoneNumber;
+    }
+
+    public UserInfo mobilePhoneNumber(String mobilePhoneNumber) {
+        this.mobilePhoneNumber = mobilePhoneNumber;
+        return this;
+    }
+
+    public void setMobilePhoneNumber(String mobilePhoneNumber) {
+        this.mobilePhoneNumber = mobilePhoneNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public UserInfo password(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public UserInfo gender(Gender gender) {
+        this.gender = gender;
+        return this;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public UserInfo lastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public UserInfo firstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public UserInfo dateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+        return this;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getHomePhoneNumber() {
+        return homePhoneNumber;
+    }
+
+    public UserInfo homePhoneNumber(String homePhoneNumber) {
+        this.homePhoneNumber = homePhoneNumber;
+        return this;
+    }
+
+    public void setHomePhoneNumber(String homePhoneNumber) {
+        this.homePhoneNumber = homePhoneNumber;
+    }
+
+    public String getOfficePhoneNumber() {
+        return officePhoneNumber;
+    }
+
+    public UserInfo officePhoneNumber(String officePhoneNumber) {
+        this.officePhoneNumber = officePhoneNumber;
+        return this;
+    }
+
+    public void setOfficePhoneNumber(String officePhoneNumber) {
+        this.officePhoneNumber = officePhoneNumber;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public UserInfo image(String image) {
+        this.image = image;
+        return this;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public UserInfo url(String url) {
+        this.url = url;
+        return this;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public UserInfo status(UserStatus status) {
+        this.status = status;
+        return this;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public UserInfo currency(Currency currency) {
+        this.currency = currency;
+        return this;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public HowDidYouFindUs getHowDidYouFindUs() {
+        return howDidYouFindUs;
+    }
+
+    public UserInfo howDidYouFindUs(HowDidYouFindUs howDidYouFindUs) {
+        this.howDidYouFindUs = howDidYouFindUs;
+        return this;
+    }
+
+    public void setHowDidYouFindUs(HowDidYouFindUs howDidYouFindUs) {
+        this.howDidYouFindUs = howDidYouFindUs;
+    }
+
+    public Instant getTimeCreated() {
+        return timeCreated;
+    }
+
+    public UserInfo timeCreated(Instant timeCreated) {
+        this.timeCreated = timeCreated;
+        return this;
+    }
+
+    public void setTimeCreated(Instant timeCreated) {
+        this.timeCreated = timeCreated;
+    }
+
+    public Instant getTimeModified() {
+        return timeModified;
+    }
+
+    public UserInfo timeModified(Instant timeModified) {
+        this.timeModified = timeModified;
+        return this;
+    }
+
+    public void setTimeModified(Instant timeModified) {
+        this.timeModified = timeModified;
+    }
+
+    public Long getTimeDeletedUnix() {
+        return timeDeletedUnix;
+    }
+
+    public UserInfo timeDeletedUnix(Long timeDeletedUnix) {
+        this.timeDeletedUnix = timeDeletedUnix;
+        return this;
+    }
+
+    public void setTimeDeletedUnix(Long timeDeletedUnix) {
+        this.timeDeletedUnix = timeDeletedUnix;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public UserInfo address(Address address) {
+        this.address = address;
+        return this;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof UserInfo)) {
+            return false;
+        }
+        return id != null && id.equals(((UserInfo) o).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+            "id=" + getId() +
+            ", username='" + getUsername() + "'" +
+            ", emailAddress='" + getEmailAddress() + "'" +
+            ", mobilePhoneNumber='" + getMobilePhoneNumber() + "'" +
+            ", password='" + getPassword() + "'" +
+            ", gender='" + getGender() + "'" +
+            ", lastName='" + getLastName() + "'" +
+            ", firstName='" + getFirstName() + "'" +
+            ", dateOfBirth='" + getDateOfBirth() + "'" +
+            ", homePhoneNumber='" + getHomePhoneNumber() + "'" +
+            ", officePhoneNumber='" + getOfficePhoneNumber() + "'" +
+            ", image='" + getImage() + "'" +
+            ", url='" + getUrl() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", currency='" + getCurrency() + "'" +
+            ", howDidYouFindUs='" + getHowDidYouFindUs() + "'" +
+            ", timeCreated='" + getTimeCreated() + "'" +
+            ", timeModified='" + getTimeModified() + "'" +
+            ", timeDeletedUnix=" + getTimeDeletedUnix() +
+            "}";
+    }
+}
